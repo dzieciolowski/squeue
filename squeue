@@ -1,0 +1,73 @@
+#!/bin/bash
+
+# Simple queue implementation based on Screen command
+#
+# For details and license see https://github.com/dzieciolowski/squeue
+
+QUEUE=squeue
+
+add_to_queue() {
+	screen -S ${QUEUE} -r -d -p 0 -X stuff "$*\r"
+}
+
+find_queue() {
+	screen -list | grep -qE "^\s+[0-9]+\.${QUEUE}\s+"
+}
+
+start_queue() {
+	if ! find_queue; then
+		screen -A -d -m -S ${QUEUE} bash
+	fi
+}
+
+show_queue() {
+	if find_queue; then
+		screen -r -d ${QUEUE}
+	fi
+}
+
+print_version() {
+	echo "squeue 1.0.0"
+}
+
+print_usage() {
+	echo "Usage: squeue [OPTION]... [COMMAND TO QUEUE]..."
+	echo ""
+	echo "Options:"
+	echo "  -n, --name=queue_name    use custom queue name (instead of default 'squeue')"
+	echo "  -s, --show               show queue (attach to screen session)"
+	echo "  -v, --version            output version information and exit"
+	echo "  -h, --help"              
+	echo "  -u, --usage              display this usage and exit"
+}
+
+if [ $# -eq 0 ]; then
+	print_usage
+	exit 1
+fi
+
+while true; do
+	case "$1" in 
+		-h|--help|-u|--usage)
+			print_usage
+			exit 0
+			;;
+		-v|--version)
+			print_version
+			exit 0
+			;;
+		-s|--show)
+			show_queue
+			exit 0
+			;;
+		-n|--name)
+			QUEUE="$2"
+			shift 2
+			;;
+		*)
+			start_queue
+			add_to_queue "$*"
+			exit 0
+			;;
+	esac
+done
