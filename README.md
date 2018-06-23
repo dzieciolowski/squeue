@@ -36,7 +36,7 @@ yaourt -S squeue
 Install `squeue` in your current working directory:
 
 ~~~~
-curl -s https://raw.githubusercontent.com/dzieciolowski/squeue/master/squeue
+curl -s -o squeue https://raw.githubusercontent.com/dzieciolowski/squeue/master/squeue
 ~~~~
 
 ## License
