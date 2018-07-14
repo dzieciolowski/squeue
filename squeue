@@ -7,7 +7,8 @@
 QUEUE=squeue
 
 add_to_queue() {
-	screen -S ${QUEUE} -r -d -p 0 -X stuff "$*\r"
+	COMMAND=$(echo "$*" | sed 's/!/\\!/g' | sed -r 's/[\\]{2,}/\\/g')
+	screen -S ${QUEUE} -r -d -p 0 -X stuff "${COMMAND}\r"
 }
 
 find_queue() {
@@ -27,7 +28,7 @@ show_queue() {
 }
 
 print_version() {
-	echo "squeue 1.0.0"
+	echo "squeue 1.0.1"
 }
 
 print_usage() {
